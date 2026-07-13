@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <title>M0609-한석봉의 작업실</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style_designing.css') }}">
+</head>
+<body>
+  <!-- USER/DATABASE/MANAGER는 별도 페이지가 아니라 탭 메뉴다. 눌러도 페이지 이동 없이
+       tabs_designing.js가 아래 [data-panel] 중 하나만 보이게 전환한다. -->
+  <nav class="top-nav">
+    <button type="button" class="tab-btn active" data-tab="user">USER</button>
+    <button type="button" class="tab-btn" data-tab="database">DATABASE</button>
+    <button type="button" class="tab-btn" data-tab="manager">MANAGER</button>
+  </nav>
+
+  <section data-panel="user">
+    <header>
+      <h1>M0609-한석봉이 돈 버는 중</h1>
+      <span id="status" class="status status--disconnected">서버 연결 중...</span>
+    </header>
+
+    <div class="user-layout">
+      <main class="user-canvas-pane">
+        <canvas id="canvas" width="800" height="680"></canvas>
+        <div id="contact-force" class="contact-force">외압: -- N</div>
+      </main>
+
+      <div class="user-side-pane">
+        <section class="char-request">
+          <span id="char-request-status"></span>
+        </section>
+
+        <section class="history">
+          <h2>작성 기록</h2>
+          <ul id="history-list"></ul>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <section data-panel="database" hidden>
+    <header>
+      <h1>작성 기록 DB</h1>
+    </header>
+
+    <div class="db-layout">
+      <div class="db-list-pane">
+        <table class="db-table">
+          <caption>작업 기록 (part_name)</caption>
+          <thead>
+            <tr><th>글씨명</th></tr>
+          </thead>
+          <tbody id="db-list-body"></tbody>
+        </table>
+      </div>
+
+      <div class="db-detail-pane">
+        <h2>상세 정보</h2>
+        <div id="db-detail">
+          <p class="db-empty-hint">왼쪽 목록에서 글씨명을 선택하세요.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="db-delete-modal" class="db-modal-overlay" hidden>
+      <div class="db-modal">
+        <p id="db-delete-modal-text"></p>
+        <div class="db-modal-buttons">
+          <button type="button" id="db-delete-no" class="db-modal-btn">No</button>
+          <button type="button" id="db-delete-yes" class="db-modal-btn db-modal-btn--danger">Yes</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MANAGER는 이 페이지의 탭이 아니라 별도 인증이 필요한 /manager 라우트로 이동한다
+       (tabs_designing.js가 MANAGER 버튼 클릭을 감지해 location 이동시킴). 탭 버튼
+       자체는 눈에 보이지만, 이 페이지 안에는 대응하는 [data-panel="manager"]가 없다. -->
+
+  <script>
+    window.WS_HOST = "{{ ws_host }}";
+    window.WS_PORT = "{{ ws_port }}";
+  </script>
+  <script src="{{ url_for('static', filename='js/main_designing.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/database_designing.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/tabs_designing.js') }}"></script>
+</body>
+</html>
