@@ -1,0 +1,14 @@
+{
+  "connector": {
+    "send_interval": 0.3
+  },
+  "robot": {
+    "lift_up": 0.0,
+    "pen_up_extra": 20.0,
+    "velx": 30,
+    "accx": 20,
+    "velj": 30,
+    "accj": 20,
+    "move_sleep": 0.05
+  }
+}
