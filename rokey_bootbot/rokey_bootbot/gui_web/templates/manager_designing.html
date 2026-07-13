@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <title>MANAGER · M0609-한석봉</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style_designing.css') }}">
+</head>
+<body>
+  <!-- 인증 게이트: 관리자 ID 입력 절차는 아직 미구현이라, 지금은 버튼을 누르면
+       입력값과 무관하게 바로 통과시킨다 (사용자 요청: "우선 지금은 아무런 버튼을
+       누르면 해당 페이지로 넘어갈 수 있도록"). 실제 ID 검증은 추후 별도 구현 예정. -->
+  <section id="mgr-gate" class="mgr-gate">
+    <div class="mgr-gate-box">
+      <h1>관리자 인증</h1>
+      <p>MANAGER 페이지는 관리자 확인이 필요합니다.<br>(현재는 인증 로직 미구현 — 버튼을 누르면 바로 진입합니다.)</p>
+      <input type="text" id="mgr-gate-id" class="mgr-gate-input" placeholder="관리자 ID" autocomplete="off">
+      <button type="button" id="mgr-gate-enter" class="mgr-gate-btn">입장</button>
+      <a href="/user" class="mgr-gate-back">← USER로 돌아가기</a>
+    </div>
+  </section>
+
+  <section id="mgr-root" data-panel="manager" hidden class="mgr-root">
+    <header class="mgr-header">
+      <div class="mgr-title">
+        <a href="/user" class="mgr-back-link" title="USER로 돌아가기">←</a>
+        <svg class="mgr-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="9" width="14" height="10" rx="2"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><circle cx="9.5" cy="14" r="1.2" fill="currentColor" stroke="none"/><circle cx="14.5" cy="14" r="1.2" fill="currentColor" stroke="none"/><path d="M12 3v2"/></svg>
+        <h1>M0609 · dsr01</h1>
+      </div>
+      <div class="mgr-header-badges">
+        <span id="mgr-connection" class="mgr-pill mgr-pill--unknown">-</span>
+        <span id="mgr-mode" class="mgr-pill mgr-pill--info">Mode: -</span>
+      </div>
+    </header>
+
+    <p class="mgr-note">
+      server_connector_node(실제) 또는 server_connector_node_designing(실험용)이
+      떠 있을 때만 값이 채워집니다.
+    </p>
+
+    <div class="mgr-viewer-row">
+      <div class="mgr-card mgr-viewer-card">
+        <h2><svg class="mgr-icon mgr-icon--sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l9 5v8l-9 5-9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>3D 뷰어 (프로토타입, joints_deg 실시간 반영)</h2>
+        <div id="mgr-3d-viewer"></div>
+      </div>
+    </div>
+
+    <div class="mgr-grid">
+      <div class="mgr-card">
+        <h2><svg class="mgr-icon mgr-icon--sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 4l5 5-9.5 9.5-5.5 1 1-5.5z"/></svg>붓끝 TCP 좌표 (mm / deg)</h2>
+        <table class="mgr-kv">
+          <tr><th>x</th><td id="mgr-tcp-x">-</td></tr>
+          <tr><th>y</th><td id="mgr-tcp-y">-</td></tr>
+          <tr><th>z</th><td id="mgr-tcp-z">-</td></tr>
+          <tr><th>w</th><td id="mgr-tcp-w">-</td></tr>
+          <tr><th>p</th><td id="mgr-tcp-p">-</td></tr>
+          <tr><th>r</th><td id="mgr-tcp-r">-</td></tr>
+        </table>
+        <div class="mgr-action-row">
+          <span>action</span>
+          <span id="mgr-action" class="mgr-pill mgr-pill--unknown">-</span>
+        </div>
+      </div>
+
+      <div class="mgr-card">
+        <h2><svg class="mgr-icon mgr-icon--sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="8" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="10" cy="18" r="2" fill="currentColor" stroke="none"/></svg>조인트 각도 (deg)</h2>
+        <div class="mgr-joints">
+          <div class="mgr-joint-row">
+            <span class="mgr-joint-label">J1</span>
+            <input type="range" id="mgr-joint-1" class="mgr-joint-slider" min="-180" max="180" value="0" disabled>
+            <span id="mgr-joint-1-val" class="mgr-joint-val">-</span>
+          </div>
+          <div class="mgr-joint-row">
+            <span class="mgr-joint-label">J2</span>
+            <input type="range" id="mgr-joint-2" class="mgr-joint-slider" min="-180" max="180" value="0" disabled>
+            <span id="mgr-joint-2-val" class="mgr-joint-val">-</span>
+          </div>
+          <div class="mgr-joint-row">
+            <span class="mgr-joint-label">J3</span>
+            <input type="range" id="mgr-joint-3" class="mgr-joint-slider" min="-180" max="180" value="0" disabled>
+            <span id="mgr-joint-3-val" class="mgr-joint-val">-</span>
+          </div>
+          <div class="mgr-joint-row">
+            <span class="mgr-joint-label">J4</span>
+            <input type="range" id="mgr-joint-4" class="mgr-joint-slider" min="-180" max="180" value="0" disabled>
+            <span id="mgr-joint-4-val" class="mgr-joint-val">-</span>
+          </div>
+          <div class="mgr-joint-row">
+            <span class="mgr-joint-label">J5</span>
+            <input type="range" id="mgr-joint-5" class="mgr-joint-slider" min="-180" max="180" value="0" disabled>
+            <span id="mgr-joint-5-val" class="mgr-joint-val">-</span>
+          </div>
+          <div class="mgr-joint-row">
+            <span class="mgr-joint-label">J6</span>
+            <input type="range" id="mgr-joint-6" class="mgr-joint-slider" min="-180" max="180" value="0" disabled>
+            <span id="mgr-joint-6-val" class="mgr-joint-val">-</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mgr-card">
+        <h2><svg class="mgr-icon mgr-icon--sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/></svg>안전 상태</h2>
+        <table class="mgr-kv">
+          <tr><th>State</th><td><span id="mgr-state" class="mgr-pill mgr-pill-fixed mgr-pill--unknown">-</span></td></tr>
+          <tr><th>Collision</th><td><span id="mgr-collision" class="mgr-pill mgr-pill-fixed mgr-pill--ok">정상</span></td></tr>
+          <tr><th>Speed limit</th><td><span id="mgr-speed-limit" class="mgr-pill mgr-pill-fixed mgr-pill--unknown">확인 필요</span></td></tr>
+          <tr><th>Fault</th><td><span id="mgr-fault" class="mgr-pill mgr-pill-fixed mgr-pill--ok">없음</span></td></tr>
+        </table>
+      </div>
+
+      <div class="mgr-card">
+        <h2><svg class="mgr-icon mgr-icon--sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12a7 7 0 0 1 14 0M8 12a4 4 0 0 1 8 0M12 12v7"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/></svg>통신 상태</h2>
+        <table class="mgr-kv">
+          <tr><th>WebSocket</th><td id="mgr-comm-ws">-</td></tr>
+          <tr><th>Poll rate</th><td id="mgr-comm-rate">-</td></tr>
+          <tr><th>마지막 연결 끊김</th><td id="mgr-comm-disconnect">없음</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="mgr-grid mgr-grid--controls">
+      <div class="mgr-card">
+        <h2>정지 / 재개</h2>
+        <div class="mgr-control-buttons">
+          <button type="button" id="mgr-btn-stop" class="mgr-btn mgr-btn--lg mgr-btn--warn">정지</button>
+          <button type="button" id="mgr-btn-reset" class="mgr-btn mgr-btn--lg mgr-btn--ok">재개</button>
+          <button type="button" id="mgr-btn-estop" class="mgr-btn mgr-btn--lg mgr-btn--danger">비상정지</button>
+          <button type="button" id="mgr-btn-safety-reset" class="mgr-btn mgr-btn--lg mgr-btn--caution">안전상태 해제</button>
+        </div>
+      </div>
+
+      <div class="mgr-card">
+        <h2>조인트 이동</h2>
+        <form id="mgr-move-form" class="mgr-move-form">
+          <div class="mgr-move-joints">
+            <label>J1 <input type="number" id="mgr-move-j1" step="0.1" required></label>
+            <label>J2 <input type="number" id="mgr-move-j2" step="0.1" required></label>
+            <label>J3 <input type="number" id="mgr-move-j3" step="0.1" required></label>
+            <label>J4 <input type="number" id="mgr-move-j4" step="0.1" required></label>
+            <label>J5 <input type="number" id="mgr-move-j5" step="0.1" required></label>
+            <label>J6 <input type="number" id="mgr-move-j6" step="0.1" required></label>
+          </div>
+          <div class="mgr-move-params">
+            <label>속도(deg/s) <input type="number" id="mgr-move-vel" value="30" step="1"></label>
+            <label>가속도(deg/s²) <input type="number" id="mgr-move-acc" value="30" step="1"></label>
+          </div>
+          <button type="submit" class="mgr-btn mgr-btn--ok">이동</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="mgr-card mgr-log-card">
+      <h2>로그</h2>
+      <pre id="mgr-log" class="mgr-log"></pre>
+    </div>
+  </section>
+
+  <script>
+    window.WS_HOST = "{{ ws_host }}";
+    window.WS_PORT = "{{ ws_port }}";
+  </script>
+  <script src="{{ url_for('static', filename='js/manager_socket_designing.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/manager_designing.js') }}"></script>
+  <script type="module" src="{{ url_for('static', filename='js/manager_viewer_designing.js') }}"></script>
+  <script>
+    // ID 인증 로직은 아직 없음(요청: "우선은 아무런 버튼을 누르면 넘어갈 수 있도록") --
+    // 게이트를 숨기고 실제 대시보드를 드러내기만 한다. 추후 실제 ID 검증을 여기에 붙인다.
+    document.getElementById('mgr-gate-enter').addEventListener('click', () => {
+      document.getElementById('mgr-gate').hidden = true;
+      document.getElementById('mgr-root').hidden = false;
+    });
+  </script>
+</body>
+</html>

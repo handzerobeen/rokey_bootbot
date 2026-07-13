@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <title>붓봇</title>
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .landing-root {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      background: #000;
+    }
+
+    .landing-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* 버튼을 화면 정중앙보다 살짝 아래에 배치 (요청: "중간에서 조금 아래") */
+    .landing-enter {
+      position: absolute;
+      left: 50%;
+      top: 58%;
+      transform: translate(-50%, -50%);
+      padding: 16px 40px;
+      font-size: 20px;
+      font-weight: 600;
+      color: #1a1a19;
+      background: #ffffff;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .landing-enter:hover {
+      transform: translate(-50%, -50%) scale(1.05);
+      box-shadow: 0 6px 26px rgba(0, 0, 0, 0.45);
+    }
+  </style>
+</head>
+<body>
+  <div class="landing-root">
+    <img class="landing-bg" src="{{ url_for('static', filename='img/landing_bg.png') }}" alt="붓봇">
+    <button type="button" class="landing-enter" onclick="location.href='/user'">붓봇 사용하러 가기</button>
+  </div>
+</body>
+</html>
