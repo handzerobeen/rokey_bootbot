@@ -1,0 +1,735 @@
+/* USER/DATABASE/MANAGER 3-페이지 구조 전용 스타일.
+   기존 style.css는 그대로 두고(원본 단일 페이지 index.html이 계속 참조),
+   이 파일은 새 *_designing.html 3개가 공통으로 추가 로드한다. */
+
+.top-nav {
+  display: flex;
+  gap: 4px;
+  padding: 0 20px;
+  background: #111;
+}
+
+/* 탭 버튼 (누르면 JS가 [data-panel]을 전환, 페이지 이동 없음) */
+.top-nav .tab-btn {
+  display: inline-block;
+  padding: 10px 18px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: #aaa;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.top-nav .tab-btn:hover {
+  color: #fff;
+}
+
+.top-nav .tab-btn.active {
+  color: #fff;
+  border-bottom-color: #2e7d32;
+}
+
+/* USER 탭: 캔버스(왼쪽) / 업로드+작성기록(오른쪽) 2분할.
+   main/.char-request/.history 자체의 기존 규칙(style.css, 원본 index.html과 공유)은
+   그대로 두고, 여기서는 이 레이아웃에서만 쓰는 클래스와 필요한 재정의만 추가한다. */
+.user-layout {
+  display: flex;
+  gap: 24px;
+  padding: 24px;
+  align-items: flex-start;
+}
+
+.user-canvas-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+/* 캔버스 바로 아래 실시간 접촉력(외압) 표시 -- 로그처럼 쌓이지 않고 현재 값만
+   갱신된다(MANAGER 탭의 TCP 좌표 표시와 동일한 방식). */
+.contact-force {
+  margin-top: 8px;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  color: #333;
+}
+
+/* 원본 style.css의 #canvas { max-width:100%; height:auto }는 2분할 폭이 800px보다
+   좁아지면 캔버스를 그만큼 줄여서 보여준다. 여기서는 항상 원래 크기(800x680,
+   HTML의 width/height 속성과 동일)로 고정한다 -- #canvas(ID)보다 더 구체적인
+   선택자라 원본 규칙을 덮어쓴다(style.css 자체는 안 건드림, 원본 페이지는
+   이 파일을 안 불러오므로 영향 없음). 실제 좌표 계산은 여전히 캔버스 width/height
+   속성값(800/680) 기준이라 이 CSS 크기 고정과 무관하게 항상 동일하다. */
+.user-canvas-pane #canvas {
+  max-width: none;
+  width: 800px;
+  height: 680px;
+  flex-shrink: 0;
+}
+
+.user-side-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 280px;
+}
+
+.user-side-pane .char-request,
+.user-side-pane .history {
+  padding: 0;
+  max-width: none;
+  margin: 0;
+}
+
+/* 작성 기록: 제목을 누르면 가로로 있던 실행 버튼 대신, 아래로 살짝 펼쳐지며
+   작성 시각 + 실행 버튼이 함께 나온다 (main_designing.js가 만드는 구조 전용). */
+.history li {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+}
+
+.history-expand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* [hidden]과 동률 specificity인 위 display:flex를 이겨야 처음엔 닫혀 있다
+   (mgr-root/db-modal-overlay에서 이미 겪은 것과 같은 종류의 버그 -- 이제 이 파일
+   에서 display를 직접 주는 요소는 항상 이 패턴을 같이 넣는다). */
+.history-expand[hidden] {
+  display: none;
+}
+
+.history-time {
+  font-size: 13px;
+  color: #555;
+}
+
+/* DATABASE 페이지: 좌/우 2분할 */
+.db-layout {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  padding: 20px;
+}
+
+.db-list-pane {
+  flex: 1;
+  min-width: 260px;
+  max-width: 360px;
+}
+
+.db-detail-pane {
+  flex: 2;
+  min-width: 320px;
+}
+
+.db-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  font-size: 14px;
+}
+
+.db-table caption {
+  text-align: left;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.db-table th,
+.db-table td {
+  border: 1px solid #ddd;
+  padding: 8px 10px;
+  text-align: left;
+}
+
+.db-table th {
+  background: #f0ece2;
+}
+
+.db-table tbody tr {
+  cursor: pointer;
+}
+
+.db-table tbody tr:hover {
+  background: #f4f1ea;
+}
+
+.db-table tbody tr.selected {
+  background: #dcefe0;
+}
+
+.db-detail-pane h2 {
+  font-size: 16px;
+  margin: 0 0 10px;
+}
+
+.db-empty-hint {
+  color: #777;
+  font-size: 14px;
+}
+
+.db-session {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+
+.db-session h3 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.db-session-heading-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.db-session .db-session-meta {
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.db-stroke-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.db-stroke-table th,
+.db-stroke-table td {
+  border: 1px solid #eee;
+  padding: 4px 6px;
+  text-align: left;
+}
+
+.db-detail-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.db-delete-btn {
+  padding: 5px 14px;
+  background: #b71c1c;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.db-delete-btn:hover {
+  background: #931717;
+}
+
+.db-delete-btn--sm {
+  padding: 3px 10px;
+  font-size: 12px;
+}
+
+/* 삭제 확인 팝업 (브라우저 기본 confirm()은 버튼 문구를 Yes/No로 바꿀 수 없어서
+   직접 만든 모달) */
+.db-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* [hidden]과 동률 specificity인 위 display:flex를 이기도록 attribute 결합 선택자로
+   명시 -- 안 그러면 JS가 hidden 속성을 true로 유지해도 팝업이 계속 보인다
+   (실제로 스크린샷 검증에서 이 버그를 발견함). */
+.db-modal-overlay[hidden] {
+  display: none;
+}
+
+.db-modal {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px 24px;
+  max-width: 360px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.db-modal p {
+  margin: 0 0 18px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #222;
+}
+
+.db-modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.db-modal-btn {
+  padding: 6px 18px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  color: #222;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.db-modal-btn:hover {
+  background: #f0ece2;
+}
+
+.db-modal-btn--danger {
+  background: #b71c1c;
+  color: #fff;
+  border-color: #b71c1c;
+}
+
+.db-modal-btn--danger:hover {
+  background: #931717;
+}
+
+/* MANAGER 탭: 로봇 모니터링 + 제어 대시보드.
+   dataviz 스킬의 검증된 다크 팔레트(references/palette.md)를 그대로 씀 --
+   surface/ink/status 값 전부 거기서 가져온 것이고 임의로 고르지 않았다.
+   action/connection 배지 색만 예외로, 사용자가 참고한 원본 PyQt 코드에
+   하드코딩되어 있던 값(#FAC775/#412402 draw, #1D9E75 connected)을 그대로 맞췄다 --
+   화면 캡처로 보여준 목표 디자인이 이 값 그대로였기 때문. */
+.mgr-root {
+  --mgr-page: #0d0d0d;
+  --mgr-surface: #1a1a19;
+  --mgr-border: rgba(255, 255, 255, 0.10);
+  --mgr-ink: #ffffff;
+  --mgr-ink-secondary: #c3c2b7;
+  --mgr-ink-muted: #898781;
+  --mgr-good: #0ca30c;
+  --mgr-warning: #fab219;
+  --mgr-serious: #ec835a;
+  --mgr-critical: #d03b3b;
+  --mgr-info: #3987e5;
+
+  min-height: 100vh;
+  background: var(--mgr-page);
+  color: var(--mgr-ink);
+  padding-bottom: 24px;
+}
+
+.mgr-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+}
+
+.mgr-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mgr-title h1 {
+  font-size: 17px;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+.mgr-icon {
+  width: 22px;
+  height: 22px;
+  color: var(--mgr-info);
+  flex-shrink: 0;
+}
+
+.mgr-icon--sm {
+  width: 15px;
+  height: 15px;
+  margin-right: 6px;
+  vertical-align: -2px;
+  color: var(--mgr-ink-muted);
+}
+
+.mgr-header-badges {
+  display: flex;
+  gap: 8px;
+}
+
+.mgr-note {
+  margin: 0;
+  padding: 4px 20px 14px;
+  font-size: 12px;
+  color: var(--mgr-ink-muted);
+}
+
+.mgr-viewer-row {
+  padding: 0 20px 14px;
+}
+
+.mgr-viewer-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.mgr-viewer-card h2 {
+  padding: 14px 18px 0;
+}
+
+#mgr-3d-viewer {
+  width: 100%;
+  height: 420px;
+}
+
+#mgr-3d-viewer canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.mgr-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+  padding: 0 20px 14px;
+}
+
+.mgr-card {
+  background: var(--mgr-surface);
+  border: 1px solid var(--mgr-border);
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+
+.mgr-card h2 {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--mgr-ink-secondary);
+  margin: 0 0 12px;
+}
+
+.mgr-kv {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.mgr-kv th {
+  text-align: left;
+  color: var(--mgr-ink-muted);
+  font-weight: 400;
+  padding: 4px 0;
+}
+
+.mgr-kv td {
+  padding: 4px 0;
+  text-align: right;
+  font-weight: 600;
+  color: var(--mgr-ink);
+}
+
+.mgr-muted {
+  font-weight: 400 !important;
+  color: var(--mgr-ink-muted) !important;
+}
+
+.mgr-action-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--mgr-border);
+  font-size: 13px;
+  color: var(--mgr-ink-muted);
+}
+
+/* 상태 배지(pill). action/connected는 원본 참고 코드의 하드코딩 색을 그대로,
+   그 외(mode/state 등)는 dataviz 검증된 status 팔레트를 쓴다. */
+.mgr-pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* 안전 상태 카드의 State/Collision/Speed limit/Fault 네 개가 각자 다른 길이로 제각각
+   보이지 않도록, 그중 가장 긴 라벨(State의 EMERGENCY_STOP)에 맞춰 폭을 고정하고
+   텍스트는 가운데 정렬한다. setPill()이 매번 mgr-pill--* 클래스만 지우고 다시 붙이는
+   방식이라, 지워지지 않도록 일부러 두 칸(--)이 아닌 한 칸(-) 클래스명을 쓴다. */
+.mgr-pill-fixed {
+  width: 70px;
+  text-align: center;
+}
+
+.mgr-pill--unknown { background: #383835; color: var(--mgr-ink-secondary); }
+.mgr-pill--info { background: var(--mgr-info); color: #ffffff; }
+.mgr-pill--ok { background: var(--mgr-good); color: #ffffff; }
+.mgr-pill--caution { background: var(--mgr-warning); color: #3a2a00; }
+.mgr-pill--warn { background: var(--mgr-serious); color: #3a1400; }
+.mgr-pill--danger { background: var(--mgr-critical); color: #ffffff; }
+
+/* action 배지: 원본 PyQt 코드(m0609_gui.py update_tcp)의 하드코딩 색 그대로 */
+.mgr-pill--action-draw { background: #FAC775; color: #412402; }
+.mgr-pill--action-move { background: #B5D4F4; color: #042C53; }
+
+.mgr-joints {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mgr-joint-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+}
+
+.mgr-joint-label {
+  width: 18px;
+  color: var(--mgr-ink-muted);
+}
+
+.mgr-joint-slider {
+  flex: 1;
+  appearance: none;
+  height: 2px;
+  background: var(--mgr-border);
+  border-radius: 999px;
+  outline: none;
+}
+
+.mgr-joint-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--mgr-ink);
+  border: none;
+  cursor: default;
+}
+
+.mgr-joint-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--mgr-ink);
+  border: none;
+  cursor: default;
+}
+
+.mgr-joint-slider::-moz-range-track {
+  height: 2px;
+  background: var(--mgr-border);
+  border-radius: 999px;
+}
+
+.mgr-joint-val {
+  width: 36px;
+  text-align: right;
+  color: var(--mgr-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.mgr-control-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.mgr-btn {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mgr-btn--lg {
+  padding: 16px 28px;
+  font-size: 17px;
+  border-radius: 8px;
+}
+
+.mgr-btn--ok { background: var(--mgr-good); }
+.mgr-btn--ok:hover { filter: brightness(1.1); }
+.mgr-btn--warn { background: var(--mgr-serious); }
+.mgr-btn--warn:hover { filter: brightness(1.1); }
+.mgr-btn--danger { background: var(--mgr-critical); }
+.mgr-btn--danger:hover { filter: brightness(1.1); }
+.mgr-btn--caution { background: var(--mgr-warning); color: #3a2a00; }
+.mgr-btn--caution:hover { filter: brightness(1.1); }
+
+.mgr-move-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mgr-move-joints {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  font-size: 12px;
+  color: var(--mgr-ink-muted);
+}
+
+.mgr-move-joints input,
+.mgr-move-params input {
+  width: 100%;
+  box-sizing: border-box;
+  background: #0d0d0d;
+  border: 1px solid var(--mgr-border);
+  border-radius: 4px;
+  color: var(--mgr-ink);
+  padding: 4px 6px;
+}
+
+.mgr-move-params {
+  display: flex;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--mgr-ink-muted);
+}
+
+.mgr-log-card {
+  margin: 0 20px;
+}
+
+.mgr-log {
+  /* 화면 길이가 로그로 무한히 늘어나지 않도록 정확히 7줄만 보이게 고정하고
+     (line-height 18px * 7줄 + 위아래 padding 10px씩), 그 이상은 내부 스크롤로 본다.
+     max-height가 아니라 height를 고정해야 로그가 7줄 미만일 때도 카드 크기가
+     들쭉날쭉하지 않는다. */
+  height: 146px;
+  line-height: 18px;
+  overflow-y: auto;
+  background: #0d0d0d;
+  color: var(--mgr-ink-secondary);
+  font-size: 12px;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--mgr-border);
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+/* MANAGER 인증 게이트 (/manager 전용, ID 검증은 아직 미구현 -- 플레이스홀더 UI).
+   .mgr-gate가 [hidden] 토글 대상이면서 display:flex도 갖고 있어서, [hidden]과 동률
+   specificity인 위 display:flex를 이겨야 처음엔 닫혀 있다 (mgr-root/db-modal-overlay/
+   history-expand에서 이미 겪은 것과 같은 종류의 버그 -- 아래 .mgr-gate[hidden]로 방지). */
+.mgr-gate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--mgr-page, #0d0d0d);
+  color: var(--mgr-ink, #ffffff);
+}
+
+.mgr-gate[hidden] {
+  display: none;
+}
+
+.mgr-gate-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 40px 48px;
+  border-radius: 12px;
+  border: 1px solid var(--mgr-border, rgba(255, 255, 255, 0.1));
+  background: var(--mgr-surface, #1a1a19);
+  text-align: center;
+  max-width: 360px;
+}
+
+.mgr-gate-box h1 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.mgr-gate-box p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--mgr-ink-secondary, #c3c2b7);
+  line-height: 1.5;
+}
+
+.mgr-gate-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--mgr-border, rgba(255, 255, 255, 0.1));
+  background: #0d0d0d;
+  color: var(--mgr-ink, #ffffff);
+  font-size: 14px;
+}
+
+.mgr-gate-btn {
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 6px;
+  background: var(--mgr-info, #3987e5);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mgr-gate-back {
+  font-size: 12px;
+  color: var(--mgr-ink-muted, #898781);
+  text-decoration: none;
+}
+
+.mgr-gate-back:hover {
+  text-decoration: underline;
+}
+
+.mgr-back-link {
+  color: var(--mgr-ink, #ffffff);
+  text-decoration: none;
+  font-size: 18px;
+  line-height: 1;
+  margin-right: 2px;
+}
+
+.mgr-back-link:hover {
+  opacity: 0.7;
+}

@@ -1,0 +1,24 @@
+{
+  "robot": {
+    "center_x": 170.00,
+    "center_y": 42.00,
+    "base_z": 98.00,
+    "base_rx": 34.26,
+    "base_ry": -178.63,
+    "base_rz": 39.11
+  },
+  "workpiece": {
+    "type": "frustum",
+    "H": 220.0,
+    "Rb": 50.0,
+    "Rt": 52.5,
+    "tilt_x": 0.0
+  },
+  "drawing": {
+    "scale": 80.0,
+    "num_points": 20
+  },
+  "path": {
+    "watch_dir": "/home/woods/ws_cobot_pjt/ws_dsr/robot_workspace"
+  }
+}

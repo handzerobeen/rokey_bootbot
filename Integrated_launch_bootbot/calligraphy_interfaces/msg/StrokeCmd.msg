@@ -1,0 +1,10 @@
+int32 total_count
+int32 stroke_id
+string part_name
+string action
+float64[] x
+float64[] y
+float64[] z
+float64[] rx
+float64[] ry
+float64[] rz
